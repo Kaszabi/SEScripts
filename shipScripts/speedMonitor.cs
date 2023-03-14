@@ -12,6 +12,7 @@ public void Main() {
     screen.BackgroundAlpha = 0.0f;
     screen.FontColor = new Color(255, 255, 255, 255);
     screen.FontSize = 1.0f;
+    float g = 9.81f;
 
     foreach (IMyThrust t in thrusters){
         float currentThrust = t.CurrentThrust;
