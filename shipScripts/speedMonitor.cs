@@ -9,6 +9,7 @@ public void Main() {
     IMyTextPanel screen = GridTerminalSystem.GetBlockWithName("ThrustScreen") as IMyTextPanel;
 
     screen.BackgroundColor = new Color(0, 0, 0, 0);
+    screen.BackgroundAlpha = 0.0f;
 
     foreach (IMyThrust t in thrusters){
         float currentThrust = t.CurrentThrust;
