@@ -2,6 +2,9 @@ public Program() {
     Runtime.UpdateFrequency = UpdateFrequency.Update100;
 }
 
+bool isCrafting = false;
+bool craftingFinished = false;
+
 public void Main(string argument, UpdateType updateSource) {
 
     projectShip("SmallProjector", "ProjScreen1");
@@ -38,6 +41,7 @@ public void projectShip(String ProjectorName, String ScreenName) {
     }
     String[] lcdLines = new String[20];
     bool finished = false;
+
     
     lcdLines[0] = $"------------------------------    {ProjectorName} STATISTICS     ------------------------------";
     if (projector.IsProjecting) {
@@ -45,16 +49,23 @@ public void projectShip(String ProjectorName, String ScreenName) {
         lcdLines[4] = $"Rotation: {projector.ProjectionRotation}";
         lcdLines[5] = $"Welding Progress: [{projector.TotalBlocks - projector.RemainingBlocks} / {projector.TotalBlocks}] {getPercent(projector.TotalBlocks - projector.RemainingBlocks, projector.TotalBlocks)}%";
 
+
         var blocks = projector.RemainingBlocksPerType;
         char[] delimiters = new char[] { ',' };
         char[] remove = new char[] { '[', ']' };
 
         Echo(blocks);
 
+        if (isCrafting) {
+            lcdLines[6] = $"Crafting currently in progress";
+        } else if (craftingFinished) {
+            lcdLines[6] = $"All components required to finish build are in container";
+        }
+
         foreach (var item in blocks) {   // block count and type left to be welded
             string[] blockInfo = item.ToString().Trim(remove).Split(delimiters, StringSplitOptions.None);
             // blockInfo[0] is blueprint, blockInfo[1] is number of required item
-            lcdLines[6] = $"{blockinfo[1]}x{blockinfo[0]}";
+            lcdLines[7] = $"{blockinfo[1]}x{blockinfo[0]}";
 
             // calculate amount of components required to finish the build
             switch (blockinfo[0]) {
@@ -64,13 +75,20 @@ public void projectShip(String ProjectorName, String ScreenName) {
         }
 
        
-
+        // start assembling components
+        if (!isCrafting) {
+            // start crafting
+            isCrafting = true;
+            craftingFinished = false;
+        }
 
 
         // https://forum.keenswh.com/threads/programmable-block-moving-inventory-items-assembler-gt-storage.7252129/
         
     } else {
         lcdLines[2] = $"Finished Current Task, No Blueprints Currently Active";
+        isCrafting = false;
+        craftingFinished = false;
     }
 
     PrintToLCD(lcdLines, display);
