@@ -14,7 +14,7 @@ public void Main() {
     screen.FontSize = 1.0f;
     float g = 9.81f;
 
-    foreach (IMyThrust t in thrusters){
+    foreach (IMyThrust t in thrusters) {
         float currentThrust = t.CurrentThrust;
         Vector3I thrustDirection = t.GridThrustDirection;
         float maxEffectiveThrust = t.MaxEffectiveThrust;
