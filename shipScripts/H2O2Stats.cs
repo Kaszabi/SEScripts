@@ -8,7 +8,7 @@ double[] prevFilled = {0};
 
 public void Main(string argument, UpdateType updateSource) {
     getTankStats("HydrogenScreen", "Hydrogen");
-    getTankStats("OxygenScreen", "Oxygen");
+    //getTankStats("OxygenScreen", "Oxygen");
 }
 
 public void PrintToLCD(String[] lcdLines, IMyTextPanel display){
@@ -31,13 +31,14 @@ public void getTankStats(String displayName, String type) {
     String[] lcdLines = new String[20];
     float capacity = 0;
     double filled = 0;
+    int index = 0;
 
     switch (type) {
         case "Hydrogen":
-            int index = 0;
+            index = 0;
             break;
         case "Oxygen":
-            int index = 1;
+            index = 1;
             break;
     }
 
@@ -52,7 +53,7 @@ public void getTankStats(String displayName, String type) {
 
     lcdLines[4] = $"Total {type}: {filled.ToString("0")} / {capacity.ToString("0")}";
     float percent = getPercent((float)filled, capacity);
-    int barWidth = 30;
+    int barWidth = 100;
     int filledBar = (int)(percent/100*barWidth);
     int emptyBar = barWidth - filledBar;
     String bar = "";
@@ -60,9 +61,9 @@ public void getTankStats(String displayName, String type) {
         bar += "|";
     }
     for (int i = 0; i < emptyBar; i++) {
-        bar += "-";
+        bar += ".";
     }
-    lcdLines[5] = $"[{bar}] {getPercent((float)filled, capacity)}%"; // % bar
+    lcdLines[5] = $"[{bar}] {getPercent((float)filled, capacity).ToString("0.00")}%"; // % bar
 
     int untilFull = (int)((capacity - filled) / ((filled - prevFilled[index]) * 0.6));
     int untilEmpty = (int)(filled / ((prevFilled[index] - filled) * 0.6));
