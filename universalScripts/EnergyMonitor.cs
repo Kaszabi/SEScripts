@@ -73,6 +73,7 @@ public void Main(string argument, UpdateType updateSource) {
         totalGen += g.CurrentOutput;
         if(g.IsWorking) funcGen++;
     }
+    totalGen -= discharging;
 
     // Ship Charging Speed
     // for(int i = 0; i < generator.Count; i++){
@@ -98,16 +99,17 @@ public void Main(string argument, UpdateType updateSource) {
     lcdLines[1] = "+" + charging.ToString("0.00") + " MW | -" + discharging.ToString("0.00") + " MW";
     lcdLines[2] = getBatteryPrediction(cur, max, charging, discharging);
     lcdLines[3] = "Functional:     [" + funcBat + "/" + battery.Count + "] " + getPercent(funcBat, battery.Count) + "%";
+    
     lcdLines[5] = "Production:    " + totalGen.ToString("0.00") + " MW ";
     lcdLines[6] = "Functional:     [" + funcGen + "/" + generator.Count + "] " + getPercent(funcGen, generator.Count) + "%";
-    lcdLines[7] = "Turbines:    " + turbineGen.ToString("0.00") + " MW ";
-    lcdLines[8] = "Functional:    [" + funcTurbine + "/" + turbine.Count + "] " + getPercent(funcTurbine, turbine.Count) + "%";
-    lcdLines[9] = "Solars:    " + solarGen.ToString("0.00") + " MW ";
-    lcdLines[10] = "Functional:    [" + funcSolar + "/" + solar.Count + "] " + getPercent(funcSolar, solar.Count) + "%";
+    
+    lcdLines[8] = "Turbines:    " + turbineGen.ToString("0.00") + " MW [" + funcTurbine + "/" + turbine.Count + "]";
+    // lcdLines[8] = "Functional:    [" + funcTurbine + "/" + turbine.Count + "] " + getPercent(funcTurbine, turbine.Count) + "%";
+    lcdLines[9] = "Solars:    " + solarGen.ToString("0.00") + " MW [" + funcSolar + "/" + solar.Count + "]";
+    // lcdLines[10] = "Functional:    [" + funcSolar + "/" + solar.Count + "] " + getPercent(funcSolar, solar.Count) + "%";
     // lcdLines[11] = "Ships Charging Rate:    " + shipsCharging.ToString("0.00") + " MW";
+    
     lcdLines[12] = "Total Base Integrity:    [" + funcBlocks + "/" + blocks.Count + "] " + getPercent(funcBlocks, blocks.Count) + "%";
-   
-
     
     string lcdText = " ";
     for(int i = 0; i < lcdLines.Length; i++){
