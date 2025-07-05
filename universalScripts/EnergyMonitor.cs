@@ -117,7 +117,7 @@ public void Main(string argument, UpdateType updateSource) {
 
     // Display
     String[] lcdLines = new String[20];
-    max = max*getPart(funcBat, battery.Count);
+    // max = max*getPart(funcBat, battery.Count);
     
     lcdLines[0] = "Battery:    " + cur.ToString("0.00") + " / " + max.ToString("0.00") + " MWh " + getPercent(cur, max) + "%";
     lcdLines[1] = "+" + charging.ToString("0.00") + " MW | -" + discharging.ToString("0.00") + " MW [" + funcBat + "/" + battery.Count + "]";
