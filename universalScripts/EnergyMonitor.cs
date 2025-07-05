@@ -62,6 +62,30 @@ public void Main(string argument, UpdateType updateSource) {
         if(s.IsWorking) funcSolar++;
     }
 
+    // Reactors
+    var reactor = new List<IMyReactor>();
+    GridTerminalSystem.GetBlocksOfType<IMyReactor>(reactor);
+    
+    float reactorGen = 0;
+    int funcReactor = 0;
+    
+    foreach(IMyReactor r in reactor) {
+        reactorGen += r.CurrentOutput;
+        if(r.IsWorking) funcReactor++;
+    }
+
+    // Hydrogen ?
+    // var solar = new List<IMySolarPanel>();
+    // GridTerminalSystem.GetBlocksOfType<IMySolarPanel>(solar);
+    
+    // float solarGen = 0;
+    // int funcSolar = 0;
+    
+    // foreach(IMySolarPanel s in solar) {
+    //     solarGen += s.CurrentOutput;
+    //     if(s.IsWorking) funcSolar++;
+    // }
+
     // All Generators
     var generator = new List<IMyPowerProducer>();
     GridTerminalSystem.GetBlocksOfType<IMyPowerProducer>(generator);
@@ -73,7 +97,7 @@ public void Main(string argument, UpdateType updateSource) {
         totalGen += g.CurrentOutput;
         if(g.IsWorking) funcGen++;
     }
-    totalGen -= discharging;
+    // totalGen -= discharging;
 
     // Ship Charging Speed
     // for(int i = 0; i < generator.Count; i++){
@@ -96,18 +120,15 @@ public void Main(string argument, UpdateType updateSource) {
     max = max*getPart(funcBat, battery.Count);
     
     lcdLines[0] = "Battery:    " + cur.ToString("0.00") + " / " + max.ToString("0.00") + " MWh " + getPercent(cur, max) + "%";
-    lcdLines[1] = "+" + charging.ToString("0.00") + " MW | -" + discharging.ToString("0.00") + " MW";
+    lcdLines[1] = "+" + charging.ToString("0.00") + " MW | -" + discharging.ToString("0.00") + " MW [" + funcBat + "/" + battery.Count + "]";
     lcdLines[2] = getBatteryPrediction(cur, max, charging, discharging);
-    lcdLines[3] = "Functional:     [" + funcBat + "/" + battery.Count + "] " + getPercent(funcBat, battery.Count) + "%";
     
-    lcdLines[5] = "Production:    " + totalGen.ToString("0.00") + " MW ";
-    lcdLines[6] = "Functional:     [" + funcGen + "/" + generator.Count + "] " + getPercent(funcGen, generator.Count) + "%";
-    
-    lcdLines[8] = "Turbines:    " + turbineGen.ToString("0.00") + " MW [" + funcTurbine + "/" + turbine.Count + "]";
-    // lcdLines[8] = "Functional:    [" + funcTurbine + "/" + turbine.Count + "] " + getPercent(funcTurbine, turbine.Count) + "%";
-    lcdLines[9] = "Solars:    " + solarGen.ToString("0.00") + " MW [" + funcSolar + "/" + solar.Count + "]";
-    // lcdLines[10] = "Functional:    [" + funcSolar + "/" + solar.Count + "] " + getPercent(funcSolar, solar.Count) + "%";
-    // lcdLines[11] = "Ships Charging Rate:    " + shipsCharging.ToString("0.00") + " MW";
+    lcdLines[4] = "Production:      " + totalGen.ToString("0.00") + " MW [" + funcGen + "/" + generator.Count + "]";
+    lcdLines[5] = " => Turbines:   " + turbineGen.ToString("0.00") + " MW [" + funcTurbine + "/" + turbine.Count + "]";
+    lcdLines[6] = " => Solars:       " + solarGen.ToString("0.00") + " MW [" + funcSolar + "/" + solar.Count + "]";
+    lcdLines[7] = " => Reactors:   " + reactorGen.ToString("0.00") + " MW [" + funcReactor + "/" + reactor.Count + "]";
+    lcdLines[8] = " => Batteries:   " + discharging.ToString("0.00") + " MW [" + funcBat + "/" + battery.Count + "]";
+
     
     lcdLines[12] = "Total Base Integrity:    [" + funcBlocks + "/" + blocks.Count + "] " + getPercent(funcBlocks, blocks.Count) + "%";
     
