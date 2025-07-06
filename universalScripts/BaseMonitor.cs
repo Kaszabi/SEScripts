@@ -164,18 +164,35 @@ public string getBatteryPrediction(float charge, float capacity, float charging,
 }
 
 public string getTankStats(String type) {
-    var tank = new List<IMyGasTank>();
-    GridTerminalSystem.GetBlocksOfType(tank, t => t.BlockDefinition.SubtypeId.Contains($"{type}Tank"));
 
     int count = 0;
     double filled = 0;
-    foreach (IMyGasTank t in tank) {
-        count += 1;
-        filled += t.FilledRatio;
+    switch (type) {
+        case "Hydrogen":
+            var tank = new List<IMyGasTank>();
+            GridTerminalSystem.GetBlocksOfType(tank, t => t.BlockDefinition.SubtypeId.Contains($"{type}"));
+            foreach (IMyGasTank t in tank) {
+                count += 1;
+                filled += t.FilledRatio;
+                type = t.ToString();
+            }
+            type = "H2";
+            break;
+        case "Oxygen":
+            var oxygentank = new List<IMyGasTank>();
+            GridTerminalSystem.GetBlocksOfType(oxygentank, t => t.CustomName.Contains("BaseOxygen"));
+            foreach (IMyGasTank t in oxygentank) {
+                count += 1;
+                filled += t.FilledRatio;
+                type = t.ToString();
+            }
+            type = "O2";
+            break;
     }
+    
     float percent = (float)filled/count;
     int barWidth = 100;
-    int filledBar = (int)(percent/100*barWidth);
+    int filledBar = (int)(percent*barWidth);
     int emptyBar = barWidth - filledBar;
     String bar = "";
     for (int i = 0; i < filledBar; i++) {
@@ -185,15 +202,6 @@ public string getTankStats(String type) {
         bar += ".";
     }
 
-    switch (type) {
-        case "Hydrogen":
-            type = "H2";
-            break;
-        case "Oxygen":
-            type = "O2";
-            break;
-    }
-
-    return type + ": " + bar + " " + percent.ToString("0.00") + "%";
+    return type + ": " + bar + " " + (percent*100).ToString("0.00") + "%";
     // return "a";
 }
