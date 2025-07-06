@@ -6,7 +6,7 @@ public void Main(string argument, UpdateType updateSource) {
     // ====================================================================
     // ===                      LCD Panel Name                          ===
     // ====================================================================
-    IMyTextPanel display = GridTerminalSystem.GetBlockWithName("Energy") as IMyTextPanel;
+    IMyTextPanel display = GridTerminalSystem.GetBlockWithName("Base") as IMyTextPanel;
     // ====================================================================
 
 
@@ -104,7 +104,7 @@ public void Main(string argument, UpdateType updateSource) {
     //     gen += generator[i].CurrentOutput;
     // }
     // float shipsCharging = gen - totalGen;
-
+    
     // Base Integrity
     var blocks = new List<IMyTerminalBlock>();
     GridTerminalSystem.GetBlocks(blocks);
@@ -129,8 +129,10 @@ public void Main(string argument, UpdateType updateSource) {
     lcdLines[7] = " => Reactors:   " + reactorGen.ToString("0.00") + " MW [" + funcReactor + "/" + reactor.Count + "]";
     lcdLines[8] = " => Batteries:   " + discharging.ToString("0.00") + " MW [" + funcBat + "/" + battery.Count + "]";
 
+    lcdLines[10] = getTankStats("Hydrogen");
+    lcdLines[11] = getTankStats("Oxygen");
     
-    lcdLines[12] = "Total Base Integrity:    [" + funcBlocks + "/" + blocks.Count + "] " + getPercent(funcBlocks, blocks.Count) + "%";
+    lcdLines[16] = "Total Base Integrity:    [" + funcBlocks + "/" + blocks.Count + "] " + getPercent(funcBlocks, blocks.Count) + "%";
     
     string lcdText = " ";
     for(int i = 0; i < lcdLines.Length; i++){
@@ -159,4 +161,39 @@ public string getBatteryPrediction(float charge, float capacity, float charging,
         return "Empty in " + emptyTime.ToString("0.00") + " hours";
     }
     return "No charging/discharging or it is the same";
+}
+
+public string getTankStats(String type) {
+    var tank = new List<IMyGasTank>();
+    GridTerminalSystem.GetBlocksOfType(tank, t => t.BlockDefinition.SubtypeId.Contains($"{type}Tank"));
+
+    int count = 0;
+    double filled = 0;
+    foreach (IMyGasTank t in tank) {
+        count += 1;
+        filled += t.FilledRatio;
+    }
+    float percent = (float)filled/count;
+    int barWidth = 100;
+    int filledBar = (int)(percent/100*barWidth);
+    int emptyBar = barWidth - filledBar;
+    String bar = "";
+    for (int i = 0; i < filledBar; i++) {
+        bar += "|";
+    }
+    for (int i = 0; i < emptyBar; i++) {
+        bar += ".";
+    }
+
+    switch (type) {
+        case "Hydrogen":
+            type = "H2";
+            break;
+        case "Oxygen":
+            type = "O2";
+            break;
+    }
+
+    return type + ": " + bar + " " + percent.ToString("0.00") + "%";
+    // return "a";
 }
